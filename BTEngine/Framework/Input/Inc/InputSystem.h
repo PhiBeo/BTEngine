@@ -2,7 +2,7 @@
 
 #include "InputTypes.h"
 
-namespace DEngine::Input
+namespace BTEngine::Input
 {
 	class InputSystem final
 	{

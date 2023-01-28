@@ -1,6 +1,6 @@
 #pragma once
 
-namespace DEngine::Input
+namespace BTEngine::Input
 {
 	enum class KeyCode : uint32_t
 	{

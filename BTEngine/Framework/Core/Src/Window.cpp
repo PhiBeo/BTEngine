@@ -19,13 +19,14 @@ LRESULT CALLBACK WindowMessageHandler(HWND handle, UINT message, WPARAM wParam, 
 void Window::Initialize(HINSTANCE instance, const std::wstring& appName, uint32_t width, uint32_t height)
 {
 	mInstance = instance;
-	mAppName = appName;
+	mAppName = std::move(appName);
 
 	WNDCLASSEX wcex;
 	wcex.cbSize = sizeof(WNDCLASSEX);
 	wcex.style = CS_HREDRAW | CS_VREDRAW;
 	wcex.lpfnWndProc = WindowMessageHandler;
 	wcex.cbClsExtra = 0;
+	wcex.cbWndExtra = 0;
 	wcex.hInstance = instance;
 	wcex.hIcon = LoadIcon(nullptr, IDI_APPLICATION);
 	wcex.hCursor = LoadCursor(nullptr, IDC_ARROW);
