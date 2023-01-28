@@ -22,8 +22,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{f4fd4d85-7ce3-465a-8b9c-6364606df7fe}</ProjectGuid>
-    <RootNamespace>BTEngine</RootNamespace>
+    <ProjectGuid>{e520c655-00d6-404b-9797-3bdb18e08847}</ProjectGuid>
+    <RootNamespace>Core</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
