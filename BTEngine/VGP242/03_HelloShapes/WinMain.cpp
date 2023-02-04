@@ -6,7 +6,7 @@ using namespace BTEngine;
 int WINAPI WinMain(HINSTANCE instance, HINSTANCE, LPSTR, int)
 {
 	AppConfig config;
-	config.appName = L"Hello Window";
+	config.appName = L"Hello Graphics";
 	
 	App myApp;
 	myApp.AddState<GameState>("GameState");
