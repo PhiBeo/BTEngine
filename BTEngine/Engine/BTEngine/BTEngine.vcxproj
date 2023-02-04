@@ -39,8 +39,14 @@
     <ProjectReference Include="..\..\Framework\Core\Core.vcxproj">
       <Project>{e520c655-00d6-404b-9797-3bdb18e08847}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\..\Framework\Graphics\Graphics.vcxproj">
+      <Project>{1ea02c7f-60fa-4539-8930-1445509ad0ec}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\..\Framework\Input\Input.vcxproj">
       <Project>{3629f01a-6fed-42eb-b308-e9f7f1346eaf}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Framework\Math\Math.vcxproj">
+      <Project>{4d79ce89-523e-44ad-916b-a75b5a4d0804}</Project>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup Label="Globals">

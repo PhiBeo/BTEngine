@@ -41,8 +41,8 @@ namespace BTEngine::Graphics
 
 		float GetBackBufferAspectRatio() const;
 
-		ID3D11Device* GetDevice();
-		ID3D11DeviceContext* GetContext();
+		ID3D11Device* GetDevice() { return mD3DDevice; }
+		ID3D11DeviceContext* GetContext() { return mImmediateContext; }
 
 	private:
 		static LRESULT CALLBACK GraphicsSystemMessageHandler(HWND handle, UINT message, WPARAM wParam, LPARAM lParam);

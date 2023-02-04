@@ -5,6 +5,7 @@
 using namespace BTEngine;
 using namespace BTEngine::Core;
 using namespace BTEngine::Input;
+using namespace BTEngine::Graphics;
 
 
 void App::ChangeState(const std::string& stateName)
@@ -31,6 +32,7 @@ void App::Run(const AppConfig& config)
     // initialize static classes
     auto handle = myWindow.GetWindowHandle();
     InputSystem::StaticInitialize(handle);
+    GraphicsSystem::StaticInitialize(handle, false);
 
     ASSERT(mCurrentState != nullptr, "App -- need an app state");
     mCurrentState->Initialize();
@@ -63,8 +65,11 @@ void App::Run(const AppConfig& config)
             mCurrentState->Update(deltaTime);
         }
 
-        mCurrentState->Render();
-        mCurrentState->DebugUI();
+        auto graphicsSystem = GraphicsSystem::Get();
+        graphicsSystem->BeginRender();
+            mCurrentState->Render();
+            mCurrentState->DebugUI();
+        graphicsSystem->EndRender();
 
         // BUILDING APP STATES
         // STARTING MATH LIBRARY (if pix engine)
@@ -74,6 +79,7 @@ void App::Run(const AppConfig& config)
     mCurrentState->Terminate();
 
     // terminate static classes
+    GraphicsSystem::StaticTerminate();
     InputSystem::StaticTerminate();
     myWindow.Terminate();
 }
