@@ -10,6 +10,8 @@ void GameState::Initialize()
 	mCamera.SetPosition({ 0.f,1.f,-1.f });
 	mCamera.SetLookAt({ 0.f,0.f,0.f });
 
+	mConstantBuffer.Initialize(sizeof(Matrix4));
+
 	mMeshBuffer.Initialize(mVertices.data(), sizeof(Vertex), mVertices.size());
 
 	std::filesystem::path shaderFile = L"../../Assets/Shaders/DoSomething.fx";
@@ -24,6 +26,7 @@ void GameState::Terminate()
 	mVertexShader.Terminate();
 	mPixShader.Terminate();
 	mMeshBuffer.Terminate();
+	mConstantBuffer.Terminate();
 }
 void GameState::Update(float deltaTime)
 {
@@ -41,6 +44,8 @@ void GameState::Update(float deltaTime)
 		Refresh();
 	}
 }
+
+float gRotationY= 0.f;
 void GameState::Render()
 {
 	mVertexShader.Bind();
@@ -50,6 +55,11 @@ void GameState::Render()
 	Matrix4 matView = mCamera.GetViewMatrix();
 	Matrix4 matProj = mCamera.GetProjectionMatrix();
 	Matrix4 matFinal = matWorld * matView * matProj;
+	Matrix4 wvp = Transpose(matFinal);
+
+	mConstantBuffer.Update(&wvp);
+	mConstantBuffer.BindVS(0);
+
 
 	mMeshBuffer.Render();
 }

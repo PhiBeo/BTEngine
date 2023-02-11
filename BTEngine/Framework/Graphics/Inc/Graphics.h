@@ -2,6 +2,7 @@
 #include "Common.h"
 
 #include "Camera.h"
+#include "ConstantBuffer.h"
 #include "Colors.h"
 #include "GraphicsSystem.h"
 #include "MeshBuffer.h"

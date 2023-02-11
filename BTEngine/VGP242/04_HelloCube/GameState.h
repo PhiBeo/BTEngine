@@ -30,6 +30,7 @@ protected:
 	Vertices mVertices;
 
 	Camera mCamera;
+	ConstantBuffer mConstantBuffer;
 	MeshBuffer mMeshBuffer;
 	VertexShader mVertexShader;
 	PixShader mPixShader;
