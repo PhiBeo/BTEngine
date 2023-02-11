@@ -6,7 +6,7 @@ namespace BTEngine::BTMath
 	{
 		union
 		{
-			struct
+			struct // row+column subscript
 			{
 				float _11, _12, _13, _14;
 				float _21, _22, _23, _24;
@@ -21,11 +21,8 @@ namespace BTEngine::BTMath
 				1.0f, 0.0f, 0.0f, 0.0f,
 				0.0f, 1.0f, 0.0f, 0.0f,
 				0.0f, 0.0f, 1.0f, 0.0f,
-				0.0f, 0.0f, 0.0f, 1.0f
-			)
-		{
-
-		}
+				0.0f, 0.0f, 0.0f, 1.0f)
+		{}
 
 		constexpr Matrix4(
 			float _11, float _12, float _13, float _14,
@@ -98,7 +95,7 @@ namespace BTEngine::BTMath
 			);
 		}
 
-		static Matrix4 MatrixRotationQuaternion(const BTMath::Quaternion& q)
+		static Matrix4 MatrixRotationQuaternion(const Quaternion& q)
 		{
 			return Matrix4
 			(

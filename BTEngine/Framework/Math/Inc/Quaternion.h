@@ -1,4 +1,5 @@
 #pragma once
+#include "Vector3.h"
 
 namespace BTEngine::BTMath
 {
@@ -26,6 +27,23 @@ namespace BTEngine::BTMath
         Quaternion operator+(const Quaternion& rhs) const { return Quaternion(x + rhs.x, y + rhs.y, z + rhs.z, w + rhs.w); }
         Quaternion operator*(float s) const { return Quaternion(x * s, y * s, z * s, w * s); }
         Quaternion operator/(float s) const { return Quaternion(x / s, y / s, z / s, w / s); }
+
+        void Conjugate() noexcept;
+        void Conjugate(Quaternion& result) const noexcept;
+
+        void Inverse(Quaternion& result) const noexcept;
+        float Dot(const Quaternion& Q) const noexcept;
+
+        static float Magnitude(const Quaternion& q);
+        static Quaternion Normalize(const Quaternion& q);
+
+        // Static functions
+        static Quaternion CreateFromAxisAngle(const Vector3& axis, float angle) noexcept;
+        static Quaternion CreateFromYawPitchRoll(float yaw, float pitch, float roll) noexcept;
+        static Quaternion CreateFromRotationMatrix(const Matrix4& M) noexcept;
+
+        static Quaternion Lerp(Quaternion q0, Quaternion q1, float t);
+        static Quaternion Slerp(Quaternion q1, Quaternion q2, float t);
 
         // Constants
         static const Quaternion Identity;
