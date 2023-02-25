@@ -17,7 +17,8 @@ public:
 
 public:
 	void Refresh();
-	void InitialMesh();
+	void StartMesh();
+	//virtual void DrawMesh() = 0;
 
 protected:
 	struct Vertex
@@ -34,4 +35,11 @@ protected:
 	MeshBuffer mMeshBuffer;
 	VertexShader mVertexShader;
 	PixShader mPixShader;
+};
+
+class RectState : public GameState
+{
+public:
+	void DrawMesh();
+	void Update(float deltaTime);
 };

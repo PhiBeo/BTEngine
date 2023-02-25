@@ -6,6 +6,7 @@
 #include "Colors.h"
 #include "GraphicsSystem.h"
 #include "MeshBuffer.h"
+#include "MeshBuilder.h"
 #include "PixShader.h"
 #include "VertexShader.h"
 #include "VertexType.h"

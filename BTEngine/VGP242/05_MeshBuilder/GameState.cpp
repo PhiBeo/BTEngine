@@ -6,10 +6,11 @@ using namespace BTEngine::Input;
 
 void GameState::Initialize()
 {
+
 	mCamera.SetPosition({ 0.f,1.f,-3.f });
 	mCamera.SetLookAt({ 0.f,0.f,0.f });
 
-	InitialMesh();
+	StartMesh();
 
 	mConstantBuffer.Initialize(sizeof(Matrix4));
 
@@ -32,6 +33,13 @@ float gRotationY = 0.f;
 float gRotationX = 0.f;
 void GameState::Update(float deltaTime)
 {
+	auto inputSystem = InputSystem::Get();
+	if (inputSystem->IsKeyPressed(KeyCode::D))
+	{
+		App& myApp = MainApp();
+		myApp.ChangeState("RectState");
+	}
+
 	gRotationY += BTMath::Constants::HalfPi * deltaTime * .5f;
 	gRotationX += BTMath::Constants::HalfPi * deltaTime * .25f;
 }
@@ -71,8 +79,29 @@ void GameState::Refresh()
 	mPixShader.Initialize(shaderFile);
 }
 
-void GameState::InitialMesh()
+void GameState::StartMesh()
 {
 	MeshPC cube = MeshBuilder::CreateCubePC(1, Colors::Azure);
+
 	mMeshBuffer.Initialize(cube);
+}
+
+void RectState::DrawMesh()
+{
+	MeshPC Rect = MeshBuilder::CreateRectPC(5, 3, 2);
+
+	mMeshBuffer.Initialize(Rect);
+}
+
+void RectState::Update(float deltaTime)
+{
+	auto inputSystem = InputSystem::Get();
+	if (inputSystem->IsKeyPressed(KeyCode::RIGHT))
+	{
+		App& myApp = MainApp();
+		myApp.ChangeState("GameState");
+	}
+
+	gRotationY += BTMath::Constants::HalfPi * deltaTime * .5f;
+	gRotationX += BTMath::Constants::HalfPi * deltaTime * .25f;
 }
