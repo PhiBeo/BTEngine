@@ -5,6 +5,11 @@ namespace BTEngine::Graphics
 	class VertexShader final
 	{
 	public:
+		template<class VertexType>
+		void Inititalize(const std::filesystem::path& filePath)
+		{
+			Initialize(filePath, VertexType::Format);
+		}
 		void Initialize(const std::filesystem::path& filePath, uint32_t format);
 		void Terminate();
 

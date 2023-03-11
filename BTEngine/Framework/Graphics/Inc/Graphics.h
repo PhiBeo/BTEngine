@@ -8,5 +8,7 @@
 #include "MeshBuffer.h"
 #include "MeshBuilder.h"
 #include "PixShader.h"
+#include "Sampler.h"
+#include "Texture.h"
 #include "VertexShader.h"
 #include "VertexType.h"
