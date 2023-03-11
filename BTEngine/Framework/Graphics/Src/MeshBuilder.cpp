@@ -58,7 +58,7 @@ namespace
 		{
 			for (int c = 0; c < numCols; ++c)
 			{
-				int i = (r * numCols)  + c;
+				int i = (r * numCols) + c;
 
 				//triangle 1
 				indices.push_back(i);
@@ -115,7 +115,7 @@ MeshPC MeshBuilder::CreateCubePC(float size, const Color& color)
 	return mesh;
 }
 
-MeshPX MeshBuilder::CreateCubePX(float size, const Color& color)
+MeshPX MeshBuilder::CreateCubePX(float size)
 {
 	MeshPX mesh;
 
@@ -141,6 +141,8 @@ MeshPX MeshBuilder::CreateCubePX(float size, const Color& color)
 Mesh MeshBuilder::CreateCube(float size)
 {
 	Mesh mesh;
+
+
 	return mesh;
 }
 
@@ -173,6 +175,25 @@ MeshPC MeshBuilder::CreateRectPC(float width, float height, float depth)
 MeshPX MeshBuilder::CreateRectPX(float width, float height, float depth)
 {
 	MeshPX mesh;
+
+	const float hw = width * .5f;
+	const float hh = height * .5f;
+	const float hd = depth * .5f;
+
+	//front
+	mesh.vertices.push_back({ {-hw, -hh, -hd}, {.25f, .66f} });	//0 FBL
+	mesh.vertices.push_back({ {-hw, hh, -hd}, {.25f, .33f} });	//1 FTL
+	mesh.vertices.push_back({ {hw, hh, -hd}, {.5f, .33f} });	//2 FTR
+	mesh.vertices.push_back({ {hw, -hh, -hd}, {.5f, .66f} });	//3 FBR
+
+	//back
+	mesh.vertices.push_back({ {-hw, -hh, hd}, {.25f, 1.f} });	//4 BBL
+	mesh.vertices.push_back({ {-hw, hh, hd}, {.0f, .33f} });	//5 BTL
+	mesh.vertices.push_back({ {hw, hh, hd}, {.5f, .0f} });		//6 BTR
+	mesh.vertices.push_back({ {hw, -hh, hd}, {.5f, 1.f} });		//7 BBR
+
+	CreateCubeIndices(mesh.indices);
+
 	return mesh;
 }
 
@@ -255,7 +276,8 @@ MeshPC MeshBuilder::CreateSpherePC(int slices, int rings, float radius)
 			mesh.vertices.push_back({ {
 				radius * sin(rotation) * sin(phi),
 				radius * cos(phi),
-				radius * cos(rotation) * sin(phi)},
+				radius * cos(rotation) * sin(phi)
+				},
 				GetNextColor(index)
 				});
 		}
@@ -269,11 +291,44 @@ MeshPC MeshBuilder::CreateSpherePC(int slices, int rings, float radius)
 MeshPX MeshBuilder::CreateSpherePX(int slices, int rings, float radius)
 {
 	MeshPX mesh;
+
+	int index = rand() % 100;
+
+	float vertRotation = BTMath::Constants::Pi / static_cast<float>(rings - 1);
+	float horzRotaion = BTMath::Constants::TwoPi / static_cast <float> (slices);
+	float uStep = 1.f / static_cast<float>(slices);
+	float vStep = 1.f / static_cast<float>(rings);
+	for (int r = 0; r <= rings; ++r)
+	{
+		float ring = static_cast<float>(r);
+		float phi = ring * vertRotation;
+		for (int s = 0; s < slices + 1; ++s)
+		{
+			float slice = static_cast<float>(s);
+			float rotation = slice * horzRotaion;
+
+			float u = 1.f - (uStep * slice);
+			float v = vStep * ring;
+
+			mesh.vertices.push_back({ {
+				radius * sin(rotation) * sin(phi),
+				radius * cos(phi),
+				radius * cos(rotation) * sin(phi)
+				},
+				{u,v} });
+		}
+	}
+
+	CreatePlaneIndices(mesh.indices, rings, slices);
+
 	return mesh;
 }
 
 Mesh MeshBuilder::CreateSphere(int slices, int rings, float radius)
 {
 	Mesh mesh;
+
+
+
 	return mesh;
 }

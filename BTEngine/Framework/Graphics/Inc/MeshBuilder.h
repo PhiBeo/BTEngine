@@ -9,7 +9,7 @@ namespace BTEngine::Graphics
 	public:
 		//Cube
 		static MeshPC CreateCubePC(float size, const Color& color);
-		static MeshPX CreateCubePX(float size, const Color& color);
+		static MeshPX CreateCubePX(float size);
 		static Mesh CreateCube(float size);
 
 		//Rect
