@@ -12,15 +12,15 @@ void GameState::Initialize()
 
 	mConstantBuffer.Initialize(sizeof(Matrix4));
 
-	MeshPX cube = MeshBuilder::CreateCubePX(1.f);
-	mMeshBuffer.Initialize(cube);
+	MeshPX skybox = MeshBuilder::CreateSkyBox(30.f);
+	mMeshBuffer.Initialize(skybox);
 
 	std::filesystem::path shaderFile = L"../../Assets/Shaders/DoTexturing.fx";
 
 	mVertexShader.Initialize(shaderFile, VE_Position | VE_TexCoord);
 	mPixShader.Initialize(shaderFile);
 	
-	mDiffuseTexture.Initialize(L"../../Assets/Textures/earth.jpg");
+	mDiffuseTexture.Initialize(L"../../Assets/Textures/Images/skybox/skybox_texture.jpg");
 	mSampler.Initialize(Sampler::Filter::Linear, Sampler::AddressMode::Wrap);
 }
 void GameState::Terminate()
@@ -38,19 +38,19 @@ float gRotationX = 0.f;
 void GameState::Update(float deltaTime)
 {
 	auto inputSystem = InputSystem::Get();
-	if (inputSystem->IsKeyDown(KeyCode::A))
+	if (inputSystem->IsKeyDown(KeyCode::S))
 	{
 		gRotationX -= BTMath::Constants::HalfPi * deltaTime * .5f;
 	}
-	if (inputSystem->IsKeyDown(KeyCode::D))
+	if (inputSystem->IsKeyDown(KeyCode::W))
 	{
 		gRotationX += BTMath::Constants::HalfPi * deltaTime * .5f;
 	}
-	if (inputSystem->IsKeyDown(KeyCode::W))
+	if (inputSystem->IsKeyDown(KeyCode::D))
 	{
 		gRotationY += BTMath::Constants::HalfPi * deltaTime * .5f;
 	}
-	if (inputSystem->IsKeyDown(KeyCode::S))
+	if (inputSystem->IsKeyDown(KeyCode::A))
 	{
 		gRotationY -= BTMath::Constants::HalfPi * deltaTime * .5f;
 	}

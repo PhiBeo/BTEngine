@@ -51,6 +51,35 @@ namespace
 			0, 7, 4
 		};
 	}
+	
+	void CreateSkyBoxIndices(std::vector<uint32_t>& indices)
+	{
+		indices = {
+			//front
+			0,2,1,
+			0,3,2,
+
+			//back
+			7, 5, 6,
+			7, 4, 5,
+
+			//right
+			3, 6, 2,
+			3, 7, 6,
+
+			//left
+			0, 1, 5,
+			0, 5, 4,
+
+			//top
+			8, 10, 9,
+			8, 11, 10,
+
+			//bottom
+			12, 13, 14,
+			12, 14, 15
+		};
+	}
 
 	void CreatePlaneIndices(std::vector<uint32_t>& indices, int numRows, int numCols)
 	{
@@ -142,6 +171,41 @@ Mesh MeshBuilder::CreateCube(float size)
 {
 	Mesh mesh;
 
+
+	return mesh;
+}
+
+MeshPX MeshBuilder::CreateSkyBox(float size)
+{
+	MeshPX mesh;
+
+	const float hs = size * .5f;
+
+	//front
+	mesh.vertices.push_back({ {-hs, -hs, -hs}, {.0f, .66f} });	//0 FBL
+	mesh.vertices.push_back({ {-hs, hs, -hs}, {.0f, .333f} });	//1 FTL
+	mesh.vertices.push_back({ {hs, hs, -hs}, {.25f, .333f} });	//2 FTR
+	mesh.vertices.push_back({ {hs, -hs, -hs}, {.25f, .66f} });	//3 FBR
+
+	//back
+	mesh.vertices.push_back({ {-hs, -hs, hs}, {.5f, .667f} });	//4 BBL
+	mesh.vertices.push_back({ {-hs, hs, hs}, {.5f, .333f} });	//5 BTL
+	mesh.vertices.push_back({ {hs, hs, hs}, {.75f, .333f} });	//6 BTR
+	mesh.vertices.push_back({ {hs, -hs, hs}, {.75f, .667f} });	//7 BBR
+
+	//top
+	mesh.vertices.push_back({ {-hs, hs, -hs}, {.25f, .333f} });	//9	 TBL
+	mesh.vertices.push_back({ {-hs, hs, hs}, {.5f, .333f} });	//10 TTL
+	mesh.vertices.push_back({ {hs, hs, hs}, {.5f, .0f} });		//11 TTR
+	mesh.vertices.push_back({ {hs, hs, -hs}, {.25f, .0f} });	//12 TBR
+
+	//bottom
+	mesh.vertices.push_back({ {-hs, -hs, -hs}, {.25f, 1.f} });	//13 BBL
+	mesh.vertices.push_back({ {-hs, -hs, hs}, {.25f, .667f} });	//14 BTL
+	mesh.vertices.push_back({ {hs, -hs, hs}, {.5f, .667f} });	//15 BTR
+	mesh.vertices.push_back({ {hs, -hs, -hs}, {.5f, 1.f} });	//16 BBR
+
+	CreateSkyBoxIndices(mesh.indices);
 
 	return mesh;
 }

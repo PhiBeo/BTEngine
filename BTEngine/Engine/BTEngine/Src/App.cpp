@@ -33,6 +33,8 @@ void App::Run(const AppConfig& config)
     auto handle = myWindow.GetWindowHandle();
     InputSystem::StaticInitialize(handle);
     GraphicsSystem::StaticInitialize(handle, false);
+    DebugUI::StaticInitialize(handle, false, true);
+    SimpleDraw::staticInitialize(config.debugDrawLimit);
 
     ASSERT(mCurrentState != nullptr, "App -- need an app state");
     mCurrentState->Initialize();
@@ -68,7 +70,9 @@ void App::Run(const AppConfig& config)
         auto graphicsSystem = GraphicsSystem::Get();
         graphicsSystem->BeginRender();
             mCurrentState->Render();
-            mCurrentState->DebugUI();
+            DebugUI::BeginRender();
+                mCurrentState->DebugUI();
+            DebugUI::EndRender();
         graphicsSystem->EndRender();
 
         // BUILDING APP STATES
@@ -79,6 +83,8 @@ void App::Run(const AppConfig& config)
     mCurrentState->Terminate();
 
     // terminate static classes
+    SimpleDraw::staticTerminate();
+    DebugUI::StaticTerminate();
     GraphicsSystem::StaticTerminate();
     InputSystem::StaticTerminate();
     myWindow.Terminate();

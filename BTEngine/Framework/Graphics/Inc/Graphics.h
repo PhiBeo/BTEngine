@@ -1,14 +1,17 @@
 #pragma once
 #include "Common.h"
 
+#include "BlendState.h"
 #include "Camera.h"
 #include "ConstantBuffer.h"
 #include "Colors.h"
+#include "DebugUI.h"
 #include "GraphicsSystem.h"
 #include "MeshBuffer.h"
 #include "MeshBuilder.h"
 #include "PixShader.h"
 #include "Sampler.h"
+#include "SimpleDraw.h"
 #include "Texture.h"
 #include "VertexShader.h"
 #include "VertexType.h"
