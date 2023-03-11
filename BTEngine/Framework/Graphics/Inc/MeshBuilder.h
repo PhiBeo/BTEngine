@@ -13,6 +13,7 @@ namespace BTEngine::Graphics
 		static Mesh CreateCube(float size);
 
 		static MeshPX CreateSkyBox(float size);
+		static MeshPX CreateSkyBoxSphere(int slices, int rings, float radius);
 
 		//Rect
 		static MeshPC CreateRectPC(float width, float height, float depth);

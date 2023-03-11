@@ -90,8 +90,10 @@ void GameState::DebugUI()
 		ImGui::DragFloat("Sphere Size", &mSphereSize, 0.1f);
 		ImGui::DragFloat3("Sphere Position", &mSpherePos.x, 0.1f);
 		ImGui::ColorEdit4("Sphere Color", &mSphereColor.r);
+		ImGui::DragInt("Ring", &mRing, 0.1f);
+		ImGui::DragInt("Slices", &mSlices, 0.1f);
 
-		SimpleDraw::AddSphere(30, 30, mSphereSize, mSpherePos, mSphereColor);
+		SimpleDraw::AddSphere(mSlices, mRing, mSphereSize, mSpherePos, mSphereColor);
 	}
 
 	if (mDrawAABBBox)

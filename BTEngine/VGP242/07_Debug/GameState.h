@@ -43,4 +43,7 @@ protected:
 	float mBoxSize = 1.f;
 	float mFillBoxSize = 1.f;
 
+	int mRing = 30;
+	int mSlices = 30;
+
 };

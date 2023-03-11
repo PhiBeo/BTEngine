@@ -258,6 +258,43 @@ void SimpleDraw::AddSphere(int slices, int rings, float radius, const Vector3& p
 	}
 }
 
+void SimpleDraw::AddCircle(int slices, int rings, float radius, const Vector3& pos, const Color& color)
+{
+	Vector3 v0 = Vector3::Zero;
+	Vector3 v1 = Vector3::Zero;
+
+	float vertRotation = BTMath::Constants::Pi / static_cast<float>(rings - 1);
+	float horzRotaion = BTMath::Constants::TwoPi / static_cast <float> (slices);
+	for (int r = 0; r <= rings; ++r)
+	{
+		float ring = static_cast<float>(r);
+		float phi = ring * vertRotation;
+		for (int s = 0; s < slices + 1; ++s)
+		{
+			float slice0 = static_cast<float>(s);
+			float rotation0 = slice0 * horzRotaion;
+
+			float slice1 = static_cast<float>(s + 1);
+			float rotation1 = slice1 * horzRotaion;
+
+			v0 =
+			{
+				radius * sin(rotation0),
+				0.0f,
+				radius * cos(rotation0)
+			};
+			v1 =
+			{
+				radius * sin(rotation1),
+				0.0f,
+				radius * cos(rotation1)
+			};
+			
+			AddLine(v0 + pos, v1 + pos, color);
+		}
+	}
+}
+
 void SimpleDraw::AddGroundPlane(float size, const Color& color)
 {
 	const float hs = size * .5f;
@@ -267,6 +304,7 @@ void SimpleDraw::AddGroundPlane(float size, const Color& color)
 		AddLine({ -hs, 0.f, i - hs }, { hs, 0.f, i - hs }, color);
 	}
 }
+
 void SimpleDraw::AddTransform(const Matrix4& m)
 {
 	const Vector3 side = { m._11, m._12, m._13 };
@@ -278,6 +316,7 @@ void SimpleDraw::AddTransform(const Matrix4& m)
 	AddLine(pos, pos + up, Colors::Green);
 	AddLine(pos, pos + look, Colors::Blue);
 }
+
 void SimpleDraw::Render(const Camera& camera)
 {
 	sInstance->Render(camera);

@@ -22,6 +22,7 @@ namespace BTEngine::Graphics
 		void AddFilledAABB(float minX, float maxX, float minY, float maxY, float minZ, float maxZ, const Vector3& pos, const Color& color);
 
 		void AddSphere(int slices, int rings, float radius, const Vector3& pos, const Color& color);
+		void AddCircle(int slices, int rings, float radius, const Vector3& pos, const Color& color);
 		
 		void AddGroundPlane(float size, const Color& color);
 

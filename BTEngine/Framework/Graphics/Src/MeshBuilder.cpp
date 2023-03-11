@@ -210,6 +210,42 @@ MeshPX MeshBuilder::CreateSkyBox(float size)
 	return mesh;
 }
 
+MeshPX BTEngine::Graphics::MeshBuilder::CreateSkyBoxSphere(int slices, int rings, float radius)
+{
+	MeshPX mesh;
+
+	int index = rand() % 100;
+
+	float vertRotation = BTMath::Constants::Pi / static_cast<float>(rings - 1);
+	float horzRotaion = BTMath::Constants::TwoPi / static_cast <float> (slices);
+	float uStep = 1.f / static_cast<float>(slices);
+	float vStep = 1.f / static_cast<float>(rings);
+	for (int r = 0; r <= rings; ++r)
+	{
+		float ring = static_cast<float>(r);
+		float phi = ring * vertRotation;
+		for (int s = 0; s < slices + 1; ++s)
+		{
+			float slice = static_cast<float>(s);
+			float rotation = slice * horzRotaion;
+
+			float u = 1.f - (uStep * slice);
+			float v = vStep * ring;
+
+			mesh.vertices.push_back({ {
+				radius * cos(rotation) * sin(phi),
+				radius * cos(phi),
+				radius * sin(rotation) * sin(phi)
+				},
+				{u,v} });
+		}
+	}
+
+	CreatePlaneIndices(mesh.indices, rings, slices);
+
+	return mesh;
+}
+
 MeshPC MeshBuilder::CreateRectPC(float width, float height, float depth)
 {
 	MeshPC mesh;
