@@ -18,7 +18,7 @@ void RenderTarget::Initialize(const std::filesystem::path& fileName)
 
 void RenderTarget::Initialize(uint32_t width, uint32_t height, Format format)
 {
-	D3D11_TEXTURE2D_DESC desc{};
+	D3D11_TEXTURE2D_DESC desc;
 	desc.Width = width;
 	desc.Height = height;
 	desc.MipLevels = 1;
@@ -32,6 +32,7 @@ void RenderTarget::Initialize(uint32_t width, uint32_t height, Format format)
 	desc.MiscFlags = 0;
 
 	auto device = GraphicsSystem::Get()->GetDevice();
+
 	ID3D11Texture2D* texture = nullptr;
 	HRESULT hr = device->CreateTexture2D(&desc, nullptr, &texture);
 	ASSERT(SUCCEEDED(hr), "RenderTarget -- Failed to create texture");
@@ -41,8 +42,6 @@ void RenderTarget::Initialize(uint32_t width, uint32_t height, Format format)
 
 	hr = device->CreateRenderTargetView(texture, nullptr, &mRenderTargetView);
 	ASSERT(SUCCEEDED(hr), "RenderTarget -- Failed to create render target view");
-
-	SafeRelease(texture);
 
 	desc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
 	desc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
@@ -57,8 +56,8 @@ void RenderTarget::Initialize(uint32_t width, uint32_t height, Format format)
 
 	mViewport.TopLeftX = 0.0f;
 	mViewport.TopLeftY = 0.0f;
-	mViewport.Width = static_cast<float>(width);
-	mViewport.Height = static_cast<float>(height);
+	mViewport.Width = (float)width;
+	mViewport.Height = (float)height;
 	mViewport.MinDepth = 0.0f;
 	mViewport.MaxDepth = 1.0f;
 }
@@ -75,12 +74,10 @@ void RenderTarget::BeginRender(Color clearColor)
 {
 	auto context = GraphicsSystem::Get()->GetContext();
 
-	//main sys info
 	UINT numViewports = 1;
-	context->OMSetRenderTargets(1, &mOldRenderTargetView, mOldDepthStencilView);
-	context->RSSetViewports(1, &mOldViewport);
+	context->OMGetRenderTargets(1, &mOldRenderTargetView, &mOldDepthStencilView);
+	context->RSGetViewports(&numViewports, &mOldViewport);
 
-	//use render target info
 	context->ClearRenderTargetView(mRenderTargetView, &clearColor.r);
 	context->ClearDepthStencilView(mDepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
 	context->OMSetRenderTargets(1, &mRenderTargetView, mDepthStencilView);

@@ -43,7 +43,14 @@ protected:
 	Sampler mSampler;
 	Matrix4 mWorldTrans;
 
-	float mCameraMoveSpeed = 5;
+	std::vector<RenderObject*> mPlanets;
+	float mRenderTargetDistance;
+	Vector3 mDistanceOffSet = { 0.f,0.f,-3.f };
+
+	float mMasterSpeed = 1;
+	float mMasterSpin = 1;
+
+	int mCurrentSelectedPlanet = 0;
 
 	Vector3 mCameraPos =  { 0.f,50.f,-100.f };
 	Vector3 mCameraLookAt = { 0.f,0.f,0.f };

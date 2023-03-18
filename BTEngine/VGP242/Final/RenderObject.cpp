@@ -8,9 +8,12 @@ void Earth::Initialize(const float& size, const float& distance, const float& mo
 	mDiffuseTexture.Initialize(L"../../Assets/Textures/earth.jpg");
 
 	mTransform = Matrix4::Identity;
-	mSpeed = moveSpeed;
+	mDefaultSpeed = moveSpeed;
 	mDistanceFromSun = distance;
-	mSelfSpinSpeed = spinSpeed;
+	mDefaultSelfSpinSpeed = spinSpeed;
+	mSize = size;
+	mSpeed = mDefaultSpeed;
+	mSelfSpinSpeed = mDefaultSelfSpinSpeed;
 }
 
 void Earth::Terminate()
@@ -60,8 +63,8 @@ void Earth::DebugUI()
 	{
 		SimpleDraw::AddCircle(60, 60, mDistanceFromSun, Vector3::Zero, Colors::Red);
 	}
-	ImGui::DragFloat("Earth Rotating Speed", &mSpeed);
-	ImGui::DragFloat("Earth Spinning Speed", &mSelfSpinSpeed);
+	ImGui::DragFloat("Earth Rotating Speed", &mDefaultSpeed);
+	ImGui::DragFloat("Earth Spinning Speed", &mDefaultSelfSpinSpeed);
 }
 
 void SkySphere::Initialize(const float& size, const float& distance, const float& moveSpeed, const float& spinSpeed)
@@ -110,9 +113,12 @@ void Sun::Initialize(const float& size, const float& distance, const float& move
 	mDiffuseTexture.Initialize(L"../../Assets/Textures/planets/sun.jpg");
 
 	mTransform = Matrix4::Identity;
-	mSpeed = moveSpeed;
+	mDefaultSpeed = moveSpeed;
 	mDistanceFromSun = distance;
-	mSelfSpinSpeed = spinSpeed;
+	mDefaultSelfSpinSpeed = spinSpeed;
+	mSize = size;
+	mSpeed = mDefaultSpeed;
+	mSelfSpinSpeed = mDefaultSelfSpinSpeed;
 }
 
 void Sun::Terminate()
@@ -123,10 +129,19 @@ void Sun::Terminate()
 
 void Sun::Update(float deltaTime)
 {
-	mYAngle += mSelfSpinSpeed/10 * deltaTime;
+	//spining itself
+	mYAngle += mSelfSpinSpeed / 10 * deltaTime;
 	Matrix4 rotMatrix = Matrix4::RotationY(mYAngle);
 	Matrix4 transMatrix = Matrix4::Translation(0.0f, 0.0f, 0.0f);
 	mTransform = rotMatrix * transMatrix;
+
+	//rotate around the sun calculation
+	mAngleToSun += mSpeed / 10 * deltaTime;
+
+	mPosition.x = cos(mAngleToSun) * mDistanceFromSun;
+	mPosition.z = sin(mAngleToSun) * mDistanceFromSun;
+
+	SetPosition(mPosition);
 }
 
 void Sun::Render(const Camera& camera, ConstantBuffer& constantBuffer, bool useTransform)
@@ -154,9 +169,12 @@ void Jupiter::Initialize(const float& size, const float& distance, const float& 
 	mDiffuseTexture.Initialize(L"../../Assets/Textures/planets/jupiter.jpg");
 
 	mTransform = Matrix4::Identity;
-	mSpeed = moveSpeed;
+	mDefaultSpeed = moveSpeed;
 	mDistanceFromSun = distance;
-	mSelfSpinSpeed = spinSpeed;
+	mDefaultSelfSpinSpeed = spinSpeed;
+	mSize = size;
+	mSpeed = mDefaultSpeed;
+	mSelfSpinSpeed = mDefaultSelfSpinSpeed;
 }
 
 void Jupiter::Terminate()
@@ -207,8 +225,8 @@ void Jupiter::DebugUI()
 	{
 		SimpleDraw::AddCircle(60, 60, mDistanceFromSun, Vector3::Zero, Colors::Red);
 	}
-	ImGui::DragFloat("Jupiter Rotating Speed", &mSpeed);
-	ImGui::DragFloat("Jupiter Spinning Speed", &mSelfSpinSpeed);
+	ImGui::DragFloat("Jupiter Rotating Speed", &mDefaultSpeed);
+	ImGui::DragFloat("Jupiter Spinning Speed", &mDefaultSelfSpinSpeed);
 }
 
 void Mars::Initialize(const float& size, const float& distance, const float& moveSpeed, const float& spinSpeed)
@@ -219,9 +237,12 @@ void Mars::Initialize(const float& size, const float& distance, const float& mov
 	mDiffuseTexture.Initialize(L"../../Assets/Textures/planets/mars.jpg");
 
 	mTransform = Matrix4::Identity;
-	mSpeed = moveSpeed;
+	mDefaultSpeed = moveSpeed;
 	mDistanceFromSun = distance;
-	mSelfSpinSpeed = spinSpeed;
+	mDefaultSelfSpinSpeed = spinSpeed;
+	mSize = size;
+	mSpeed = mDefaultSpeed;
+	mSelfSpinSpeed = mDefaultSelfSpinSpeed;
 }
 
 void Mars::Terminate()
@@ -271,8 +292,8 @@ void Mars::DebugUI()
 	{
 		SimpleDraw::AddCircle(60, 60, mDistanceFromSun, Vector3::Zero, Colors::Red);
 	}
-	ImGui::DragFloat("Mars Rotating Speed", &mSpeed);
-	ImGui::DragFloat("Mars Spinning Speed", &mSelfSpinSpeed);
+	ImGui::DragFloat("MarsRotating Speed", &mDefaultSpeed);
+	ImGui::DragFloat("Mars Spinning Speed", &mDefaultSelfSpinSpeed);
 }
 
 void Mercury::Initialize(const float& size, const float& distance, const float& moveSpeed, const float& spinSpeed)
@@ -283,9 +304,12 @@ void Mercury::Initialize(const float& size, const float& distance, const float& 
 	mDiffuseTexture.Initialize(L"../../Assets/Textures/planets/mercury.jpg");
 
 	mTransform = Matrix4::Identity;
-	mSpeed = moveSpeed;
+	mDefaultSpeed = moveSpeed;
 	mDistanceFromSun = distance;
-	mSelfSpinSpeed = spinSpeed;
+	mDefaultSelfSpinSpeed = spinSpeed;
+	mSize = size;
+	mSpeed = mDefaultSpeed;
+	mSelfSpinSpeed = mDefaultSelfSpinSpeed;
 }
 
 void Mercury::Terminate()
@@ -335,8 +359,8 @@ void Mercury::DebugUI()
 	{
 		SimpleDraw::AddCircle(60, 60, mDistanceFromSun, Vector3::Zero, Colors::Red);
 	}
-	ImGui::DragFloat("Mercury Rotating Speed", &mSpeed);
-	ImGui::DragFloat("Mercury Spinning Speed", &mSelfSpinSpeed);
+	ImGui::DragFloat("Mercury Rotating Speed", &mDefaultSpeed);
+	ImGui::DragFloat("Mercury Spinning Speed", &mDefaultSelfSpinSpeed);
 }
 
 void Neptune::Initialize(const float& size, const float& distance, const float& moveSpeed, const float& spinSpeed)
@@ -347,9 +371,12 @@ void Neptune::Initialize(const float& size, const float& distance, const float& 
 	mDiffuseTexture.Initialize(L"../../Assets/Textures/planets/neptune.jpg");
 
 	mTransform = Matrix4::Identity;
-	mSpeed = moveSpeed;
+	mDefaultSpeed = moveSpeed;
 	mDistanceFromSun = distance;
-	mSelfSpinSpeed = spinSpeed;
+	mDefaultSelfSpinSpeed = spinSpeed;
+	mSize = size;
+	mSpeed = mDefaultSpeed;
+	mSelfSpinSpeed = mDefaultSelfSpinSpeed;
 }
 
 void Neptune::Terminate()
@@ -399,8 +426,8 @@ void Neptune::DebugUI()
 	{
 		SimpleDraw::AddCircle(60, 60, mDistanceFromSun, Vector3::Zero, Colors::Red);
 	}
-	ImGui::DragFloat("Neptune Rotating Speed", &mSpeed);
-	ImGui::DragFloat("Neptune Spinning Speed", &mSelfSpinSpeed);
+	ImGui::DragFloat("Neptune Rotating Speed", &mDefaultSpeed);
+	ImGui::DragFloat("Neptune Spinning Speed", &mDefaultSelfSpinSpeed);
 }
 
 void Pluto::Initialize(const float& size, const float& distance, const float& moveSpeed, const float& spinSpeed)
@@ -411,9 +438,12 @@ void Pluto::Initialize(const float& size, const float& distance, const float& mo
 	mDiffuseTexture.Initialize(L"../../Assets/Textures/planets/pluto.jpg");
 
 	mTransform = Matrix4::Identity;
-	mSpeed = moveSpeed;
+	mDefaultSpeed = moveSpeed;
 	mDistanceFromSun = distance;
-	mSelfSpinSpeed = spinSpeed;
+	mDefaultSelfSpinSpeed = spinSpeed;
+	mSize = size;
+	mSpeed = mDefaultSpeed;
+	mSelfSpinSpeed = mDefaultSelfSpinSpeed;
 }
 
 void Pluto::Terminate()
@@ -463,8 +493,8 @@ void Pluto::DebugUI()
 	{
 		SimpleDraw::AddCircle(60, 60, mDistanceFromSun, Vector3::Zero, Colors::Red);
 	}
-	ImGui::DragFloat("Pluto Rotating Speed", &mSpeed);
-	ImGui::DragFloat("Pluto Spinning Speed", &mSelfSpinSpeed);
+	ImGui::DragFloat("Pluto Rotating Speed", &mDefaultSpeed);
+	ImGui::DragFloat("Pluto Spinning Speed", &mDefaultSelfSpinSpeed);
 }
 
 void Saturn::Initialize(const float& size, const float& distance, const float& moveSpeed, const float& spinSpeed)
@@ -475,9 +505,12 @@ void Saturn::Initialize(const float& size, const float& distance, const float& m
 	mDiffuseTexture.Initialize(L"../../Assets/Textures/planets/saturn.jpg");
 
 	mTransform = Matrix4::Identity;
-	mSpeed = moveSpeed;
+	mDefaultSpeed = moveSpeed;
 	mDistanceFromSun = distance;
-	mSelfSpinSpeed = spinSpeed;
+	mDefaultSelfSpinSpeed = spinSpeed;
+	mSize = size;
+	mSpeed = mDefaultSpeed;
+	mSelfSpinSpeed = mDefaultSelfSpinSpeed;
 }
 
 void Saturn::Terminate()
@@ -527,8 +560,8 @@ void Saturn::DebugUI()
 	{
 		SimpleDraw::AddCircle(60, 60, mDistanceFromSun, Vector3::Zero, Colors::Red);
 	}
-	ImGui::DragFloat("Saturn Rotating Speed", &mSpeed);
-	ImGui::DragFloat("Saturn Spinning Speed", &mSelfSpinSpeed);
+	ImGui::DragFloat("Saturn Rotating Speed", &mDefaultSpeed);
+	ImGui::DragFloat("Saturn Spinning Speed", &mDefaultSelfSpinSpeed);
 }
 
 void Uranus::Initialize(const float& size, const float& distance, const float& moveSpeed, const float& spinSpeed)
@@ -539,9 +572,12 @@ void Uranus::Initialize(const float& size, const float& distance, const float& m
 	mDiffuseTexture.Initialize(L"../../Assets/Textures/planets/uranus.jpg");
 
 	mTransform = Matrix4::Identity;
-	mSpeed = moveSpeed;
+	mDefaultSpeed = moveSpeed;
 	mDistanceFromSun = distance;
-	mSelfSpinSpeed = spinSpeed;
+	mDefaultSelfSpinSpeed = spinSpeed;
+	mSize = size;
+	mSpeed = mDefaultSpeed;
+	mSelfSpinSpeed = mDefaultSelfSpinSpeed;
 }
 
 void Uranus::Terminate()
@@ -591,8 +627,8 @@ void Uranus::DebugUI()
 	{
 		SimpleDraw::AddCircle(60, 60, mDistanceFromSun, Vector3::Zero, Colors::Red);
 	}
-	ImGui::DragFloat("Uranus Rotating Speed", &mSpeed);
-	ImGui::DragFloat("Uranus Spinning Speed", &mSelfSpinSpeed);
+	ImGui::DragFloat("Uranus Rotating Speed", &mDefaultSpeed);
+	ImGui::DragFloat("Uranus Spinning Speed", &mDefaultSelfSpinSpeed);
 }
 
 void Venus::Initialize(const float& size, const float& distance, const float& moveSpeed, const float& spinSpeed)
@@ -603,9 +639,12 @@ void Venus::Initialize(const float& size, const float& distance, const float& mo
 	mDiffuseTexture.Initialize(L"../../Assets/Textures/planets/venus.jpg");
 
 	mTransform = Matrix4::Identity;
-	mSpeed = moveSpeed;
+	mDefaultSpeed = moveSpeed;
 	mDistanceFromSun = distance;
-	mSelfSpinSpeed = spinSpeed;
+	mDefaultSelfSpinSpeed = spinSpeed;
+	mSize = size;
+	mSpeed = mDefaultSpeed;
+	mSelfSpinSpeed = mDefaultSelfSpinSpeed;
 }
 
 void Venus::Terminate()
@@ -655,6 +694,6 @@ void Venus::DebugUI()
 	{
 		SimpleDraw::AddCircle(60, 60, mDistanceFromSun, Vector3::Zero, Colors::Red);
 	}
-	ImGui::DragFloat("Venus Rotating Speed", &mSpeed);
-	ImGui::DragFloat("Venus Spinning Speed", &mSelfSpinSpeed);
+	ImGui::DragFloat("Venus Rotating Speed", &mDefaultSpeed);
+	ImGui::DragFloat("Venus Spinning Speed", &mDefaultSelfSpinSpeed);
 }

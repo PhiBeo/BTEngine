@@ -15,9 +15,25 @@ public:
 	virtual void DebugUI() {}
 
 	void SetPosition(const Vector3& pos) { mTransform._41 = pos.x, mTransform._42 = pos.y, mTransform._43 = pos.z; };
-	void SetSpeed(const float& speed) { mSpeed = speed; };
+	void SetSpeed(const float& speed) { mDefaultSpeed = speed; };
 	void SetDistanceFromSun(const float& distance) { mDistanceFromSun = distance; };
-	void SetSelfSpinSpeed(const float& speed) { mSelfSpinSpeed = speed; };
+	void SetSelfSpinSpeed(const float& speed) { mDefaultSelfSpinSpeed = speed; };
+
+	Vector3 GetPosition() { return mPosition; };
+	float GetSpeed() { return mDefaultSpeed; };
+	float GetDistanceFromSun() { return mDistanceFromSun; };
+	float GetSelfSpinSpeed() { return mDefaultSelfSpinSpeed; };
+	float GetSize() { return mSize; };
+
+	void AddSpeed(float speed) 
+	{
+		mSpeed = mDefaultSpeed * speed;
+	}
+
+	void AddSpin(float spin)
+	{
+		mSelfSpinSpeed = mDefaultSelfSpinSpeed * spin;
+	}
 
 protected:
 
@@ -25,13 +41,15 @@ protected:
 	Texture mDiffuseTexture;
 	Matrix4 mTransform;
 
-	float mSpeed = 0;
 	Vector3 mPosition = Vector3::Zero;
 	float mDistanceFromSun = 0;
 	float mAngleToSun = 0;
 	bool mOrbitLine = true;
-
-	float mSelfSpinSpeed = 0;
+	float mSize;
+	float mDefaultSpeed = 0;
+	float mSpeed;
+	float mDefaultSelfSpinSpeed = 0;
+	float mSelfSpinSpeed;
 	float mYAngle = 0;
 };
 
