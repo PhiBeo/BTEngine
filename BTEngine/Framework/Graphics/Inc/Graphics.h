@@ -9,6 +9,7 @@
 #include "GraphicsSystem.h"
 #include "MeshBuffer.h"
 #include "MeshBuilder.h"
+#include "RenderTarget.h"
 #include "PixShader.h"
 #include "Sampler.h"
 #include "SimpleDraw.h"

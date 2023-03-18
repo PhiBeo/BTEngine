@@ -21,9 +21,11 @@ protected:
 	void RenderMesh(const Camera& camera, bool useTransform);
 
 	Camera mCamera;
+	Camera mRenderTargetCamera;
 	ConstantBuffer mConstantBuffer;
 	VertexShader mVertexShader;
 	PixShader mPixShader;
+	RenderTarget mRenderTarget;
 
 	//render object
 	SkySphere mSkySphere;

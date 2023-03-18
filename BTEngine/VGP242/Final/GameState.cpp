@@ -6,9 +6,12 @@ using namespace BTEngine::Input;
 
 void GameState::Initialize()
 {
-
 	mCamera.SetPosition(mCameraPos);
 	mCamera.SetLookAt(mCameraLookAt);
+
+	mRenderTargetCamera.SetPosition({ .0f, 2.f, mCameraPos.z });
+	mRenderTargetCamera.SetLookAt({ mCameraLookAt });
+	mRenderTargetCamera.SetAspectRatio(1.f);
 
 	mConstantBuffer.Initialize(sizeof(Matrix4));
 
@@ -18,6 +21,9 @@ void GameState::Initialize()
 	
 	mSampler.Initialize(Sampler::Filter::Linear, Sampler::AddressMode::Wrap);
 	mWorldTrans = Matrix4::Identity;
+
+	constexpr uint32_t size = 512;
+	mRenderTarget.Initialize(size, size, Texture::Format::RGBA_U32);
 
 	mSkySphere.Initialize(500.f, 0, 0, 0);
 	mSun.Initialize(5.f, 0, 0, 0);
@@ -45,6 +51,7 @@ void GameState::Terminate()
 	mNeptune.Terminate();
 	mPluto.Terminate();
 
+	mRenderTarget.Terminate();
 	mSampler.Terminate();
 	mPixShader.Terminate();
 	mVertexShader.Terminate();
@@ -55,15 +62,21 @@ void GameState::Update(float deltaTime)
 {
 	auto inputSystem = InputSystem::Get();
 
-	if (inputSystem->IsMouseDown(MouseButton::LBUTTON) || inputSystem->IsMouseDown(MouseButton::RBUTTON))
-	{
-		mCameraLookAt.x += inputSystem->GetMouseMoveX() * deltaTime * 10;
-		mCameraLookAt.y -= inputSystem->GetMouseMoveY() * deltaTime * 10;
-		mCamera.SetLookAt(mCameraLookAt);
-	}
+	const float moveSpeed = (inputSystem->IsKeyDown(KeyCode::LSHIFT) ? 50.f : 10.f) * deltaTime;
+	const float turnSpeed = -.1f * deltaTime;
 
-	if (inputSystem->IsKeyDown(KeyCode::MINUS)) mCamera.Zoom(-1 * deltaTime);
-	else if (inputSystem->IsKeyDown(KeyCode::EQUALS)) mCamera.Zoom(deltaTime);
+	if (inputSystem->IsKeyDown(KeyCode::W)) mCamera.Walk(moveSpeed);
+	else if (inputSystem->IsKeyDown(KeyCode::S)) mCamera.Walk(-moveSpeed);
+	if (inputSystem->IsKeyDown(KeyCode::D)) mCamera.Strafe(moveSpeed);
+	else if (inputSystem->IsKeyDown(KeyCode::A)) mCamera.Strafe(-moveSpeed);
+	if (inputSystem->IsKeyDown(KeyCode::E)) mCamera.Rise(moveSpeed);
+	else if (inputSystem->IsKeyDown(KeyCode::Q)) mCamera.Rise(-moveSpeed);
+
+	if (inputSystem->IsMouseDown(MouseButton::RBUTTON))
+	{
+		mCamera.Yaw(inputSystem->GetMouseMoveX() * turnSpeed);
+		mCamera.Pitch(inputSystem->GetMouseMoveY() * turnSpeed);
+	}
 
 	mSun.Update(deltaTime);
 	mMercury.Update(deltaTime);
@@ -82,7 +95,10 @@ void GameState::Render()
 	mVertexShader.Bind();
 	mPixShader.Bind();
 	mSampler.BindPS(0);
-
+	
+	//mRenderTarget.BeginRender();
+		//RenderMesh(mRenderTargetCamera, false);
+	//mRenderTarget.EndRender();
 	RenderMesh(mCamera, true);
 }
 
@@ -116,5 +132,15 @@ void GameState::DebugUI()
 	mPluto.DebugUI();
 	
 	SimpleDraw::Render(mCamera);
+
+	ImGui::Text("Render Target");
+	ImGui::Image(
+		mRenderTarget.GetRawData(),
+		{ 128,128 },
+		{ 0,0 },
+		{ 1,1 },
+		{ 1,1,1,1 },
+		{ 1,1,1,1 }
+	);
 	ImGui::End();
 }
