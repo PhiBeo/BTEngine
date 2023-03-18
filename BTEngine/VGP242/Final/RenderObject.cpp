@@ -1,16 +1,16 @@
 #include "RenderObject.h"
 
-void Earth::Initialize()
+void Earth::Initialize(const float& size, const float& distance, const float& moveSpeed, const float& spinSpeed)
 {
-	MeshPX sphere = MeshBuilder::CreateSpherePX(30, 30, 3.0f);
+	MeshPX sphere = MeshBuilder::CreateSpherePX(30, 30, size);
 	mMeshBuffer.Initialize(sphere);
 
 	mDiffuseTexture.Initialize(L"../../Assets/Textures/earth.jpg");
 
 	mTransform = Matrix4::Identity;
-
-	mSpeed = 1;
-	mDistanceFromSun = 100;
+	mSpeed = moveSpeed;
+	mDistanceFromSun = distance;
+	mSelfSpinSpeed = spinSpeed;
 }
 
 void Earth::Terminate()
@@ -21,7 +21,14 @@ void Earth::Terminate()
 
 void Earth::Update(float deltaTime)
 {
-	mAngleToSun += mSpeed/10 * deltaTime;
+	//spining itself
+	mYAngle += mSelfSpinSpeed / 10 * deltaTime;
+	Matrix4 rotMatrix = Matrix4::RotationY(mYAngle);
+	Matrix4 transMatrix = Matrix4::Translation(0.0f, 0.0f, 0.0f);
+	mTransform = rotMatrix * transMatrix;
+
+	//rotate around the sun calculation
+	mAngleToSun += mSpeed / 10 * deltaTime;
 
 	mPosition.x = cos(mAngleToSun) * mDistanceFromSun;
 	mPosition.z = sin(mAngleToSun) * mDistanceFromSun;
@@ -53,11 +60,13 @@ void Earth::DebugUI()
 	{
 		SimpleDraw::AddCircle(60, 60, mDistanceFromSun, Vector3::Zero, Colors::Red);
 	}
+	ImGui::DragFloat("Earth Rotating Speed", &mSpeed);
+	ImGui::DragFloat("Earth Spinning Speed", &mSelfSpinSpeed);
 }
 
-void SkySphere::Initialize()
+void SkySphere::Initialize(const float& size, const float& distance, const float& moveSpeed, const float& spinSpeed)
 {
-	MeshPX skySphere = MeshBuilder::CreateSkyBoxSphere(500, 500, 500.f);
+	MeshPX skySphere = MeshBuilder::CreateSkyBoxSphere(500, 500, size);
 	mMeshBuffer.Initialize(skySphere);
 
 	mDiffuseTexture.Initialize(L"../../Assets/Textures/skysphere/space.jpg");
@@ -93,15 +102,17 @@ void SkySphere::Render(const Camera& camera, ConstantBuffer& constantBuffer, boo
 	Texture::UnbindPS(0);
 }
 
-void Sun::Initialize()
+void Sun::Initialize(const float& size, const float& distance, const float& moveSpeed, const float& spinSpeed)
 {
-	MeshPX sphere = MeshBuilder::CreateSpherePX(60, 60, 10.0f);
+	MeshPX sphere = MeshBuilder::CreateSpherePX(60, 60, size);
 	mMeshBuffer.Initialize(sphere);
 
 	mDiffuseTexture.Initialize(L"../../Assets/Textures/planets/sun.jpg");
 
 	mTransform = Matrix4::Identity;
-	mSelfSpinSpeed = 5;
+	mSpeed = moveSpeed;
+	mDistanceFromSun = distance;
+	mSelfSpinSpeed = spinSpeed;
 }
 
 void Sun::Terminate()
@@ -116,7 +127,6 @@ void Sun::Update(float deltaTime)
 	Matrix4 rotMatrix = Matrix4::RotationY(mYAngle);
 	Matrix4 transMatrix = Matrix4::Translation(0.0f, 0.0f, 0.0f);
 	mTransform = rotMatrix * transMatrix;
-
 }
 
 void Sun::Render(const Camera& camera, ConstantBuffer& constantBuffer, bool useTransform)
@@ -136,14 +146,17 @@ void Sun::Render(const Camera& camera, ConstantBuffer& constantBuffer, bool useT
 	Texture::UnbindPS(0);
 }
 
-void Jupiter::Initialize()
+void Jupiter::Initialize(const float& size, const float& distance, const float& moveSpeed, const float& spinSpeed)
 {
-	MeshPX sphere = MeshBuilder::CreateSpherePX(30, 30, 1.0f);
+	MeshPX sphere = MeshBuilder::CreateSpherePX(30, 30, size);
 	mMeshBuffer.Initialize(sphere);
 
 	mDiffuseTexture.Initialize(L"../../Assets/Textures/planets/jupiter.jpg");
 
 	mTransform = Matrix4::Identity;
+	mSpeed = moveSpeed;
+	mDistanceFromSun = distance;
+	mSelfSpinSpeed = spinSpeed;
 }
 
 void Jupiter::Terminate()
@@ -155,7 +168,19 @@ void Jupiter::Terminate()
 
 void Jupiter::Update(float deltaTime)
 {
+	//spining itself
+	mYAngle += mSelfSpinSpeed / 10 * deltaTime;
+	Matrix4 rotMatrix = Matrix4::RotationY(mYAngle);
+	Matrix4 transMatrix = Matrix4::Translation(0.0f, 0.0f, 0.0f);
+	mTransform = rotMatrix * transMatrix;
 
+	//rotate around the sun calculation
+	mAngleToSun += mSpeed / 10 * deltaTime;
+
+	mPosition.x = cos(mAngleToSun) * mDistanceFromSun;
+	mPosition.z = sin(mAngleToSun) * mDistanceFromSun;
+
+	SetPosition(mPosition);
 }
 
 void Jupiter::Render(const Camera& camera, ConstantBuffer& constantBuffer, bool useTransform)
@@ -175,14 +200,28 @@ void Jupiter::Render(const Camera& camera, ConstantBuffer& constantBuffer, bool 
 	Texture::UnbindPS(0);
 }
 
-void Mars::Initialize()
+void Jupiter::DebugUI()
 {
-	MeshPX sphere = MeshBuilder::CreateSpherePX(30, 30, 1.0f);
+	ImGui::Checkbox("Jupiter Orbit Line", &mOrbitLine);
+	if (mOrbitLine)
+	{
+		SimpleDraw::AddCircle(60, 60, mDistanceFromSun, Vector3::Zero, Colors::Red);
+	}
+	ImGui::DragFloat("Jupiter Rotating Speed", &mSpeed);
+	ImGui::DragFloat("Jupiter Spinning Speed", &mSelfSpinSpeed);
+}
+
+void Mars::Initialize(const float& size, const float& distance, const float& moveSpeed, const float& spinSpeed)
+{
+	MeshPX sphere = MeshBuilder::CreateSpherePX(30, 30, size);
 	mMeshBuffer.Initialize(sphere);
 
 	mDiffuseTexture.Initialize(L"../../Assets/Textures/planets/mars.jpg");
 
 	mTransform = Matrix4::Identity;
+	mSpeed = moveSpeed;
+	mDistanceFromSun = distance;
+	mSelfSpinSpeed = spinSpeed;
 }
 
 void Mars::Terminate()
@@ -193,6 +232,19 @@ void Mars::Terminate()
 
 void Mars::Update(float deltaTime)
 {
+	//spining itself
+	mYAngle += mSelfSpinSpeed / 10 * deltaTime;
+	Matrix4 rotMatrix = Matrix4::RotationY(mYAngle);
+	Matrix4 transMatrix = Matrix4::Translation(0.0f, 0.0f, 0.0f);
+	mTransform = rotMatrix * transMatrix;
+
+	//rotate around the sun calculation
+	mAngleToSun += mSpeed / 10 * deltaTime;
+
+	mPosition.x = cos(mAngleToSun) * mDistanceFromSun;
+	mPosition.z = sin(mAngleToSun) * mDistanceFromSun;
+
+	SetPosition(mPosition);
 }
 
 void Mars::Render(const Camera& camera, ConstantBuffer& constantBuffer, bool useTransform)
@@ -212,17 +264,28 @@ void Mars::Render(const Camera& camera, ConstantBuffer& constantBuffer, bool use
 	Texture::UnbindPS(0);
 }
 
-void Mercury::Initialize()
+void Mars::DebugUI()
 {
-	MeshPX sphere = MeshBuilder::CreateSpherePX(30, 30, 1.0f);
+	ImGui::Checkbox("Mars Orbit Line", &mOrbitLine);
+	if (mOrbitLine)
+	{
+		SimpleDraw::AddCircle(60, 60, mDistanceFromSun, Vector3::Zero, Colors::Red);
+	}
+	ImGui::DragFloat("Mars Rotating Speed", &mSpeed);
+	ImGui::DragFloat("Mars Spinning Speed", &mSelfSpinSpeed);
+}
+
+void Mercury::Initialize(const float& size, const float& distance, const float& moveSpeed, const float& spinSpeed)
+{
+	MeshPX sphere = MeshBuilder::CreateSpherePX(30, 30, size);
 	mMeshBuffer.Initialize(sphere);
 
 	mDiffuseTexture.Initialize(L"../../Assets/Textures/planets/mercury.jpg");
 
 	mTransform = Matrix4::Identity;
-
-	mSpeed = 1;
-	mDistanceFromSun = 20;
+	mSpeed = moveSpeed;
+	mDistanceFromSun = distance;
+	mSelfSpinSpeed = spinSpeed;
 }
 
 void Mercury::Terminate()
@@ -233,6 +296,13 @@ void Mercury::Terminate()
 
 void Mercury::Update(float deltaTime)
 {
+	//spining itself
+	mYAngle += mSelfSpinSpeed / 10 * deltaTime;
+	Matrix4 rotMatrix = Matrix4::RotationY(mYAngle);
+	Matrix4 transMatrix = Matrix4::Translation(0.0f, 0.0f, 0.0f);
+	mTransform = rotMatrix * transMatrix;
+
+	//rotate around the sun calculation
 	mAngleToSun += mSpeed / 10 * deltaTime;
 
 	mPosition.x = cos(mAngleToSun) * mDistanceFromSun;
@@ -258,14 +328,28 @@ void Mercury::Render(const Camera& camera, ConstantBuffer& constantBuffer, bool 
 	Texture::UnbindPS(0);
 }
 
-void Neptune::Initialize()
+void Mercury::DebugUI()
 {
-	MeshPX sphere = MeshBuilder::CreateSpherePX(30, 30, 1.0f);
+	ImGui::Checkbox("Mercury Orbit Line", &mOrbitLine);
+	if (mOrbitLine)
+	{
+		SimpleDraw::AddCircle(60, 60, mDistanceFromSun, Vector3::Zero, Colors::Red);
+	}
+	ImGui::DragFloat("Mercury Rotating Speed", &mSpeed);
+	ImGui::DragFloat("Mercury Spinning Speed", &mSelfSpinSpeed);
+}
+
+void Neptune::Initialize(const float& size, const float& distance, const float& moveSpeed, const float& spinSpeed)
+{
+	MeshPX sphere = MeshBuilder::CreateSpherePX(30, 30, size);
 	mMeshBuffer.Initialize(sphere);
 
 	mDiffuseTexture.Initialize(L"../../Assets/Textures/planets/neptune.jpg");
 
 	mTransform = Matrix4::Identity;
+	mSpeed = moveSpeed;
+	mDistanceFromSun = distance;
+	mSelfSpinSpeed = spinSpeed;
 }
 
 void Neptune::Terminate()
@@ -276,6 +360,19 @@ void Neptune::Terminate()
 
 void Neptune::Update(float deltaTime)
 {
+	//spining itself
+	mYAngle += mSelfSpinSpeed / 10 * deltaTime;
+	Matrix4 rotMatrix = Matrix4::RotationY(mYAngle);
+	Matrix4 transMatrix = Matrix4::Translation(0.0f, 0.0f, 0.0f);
+	mTransform = rotMatrix * transMatrix;
+
+	//rotate around the sun calculation
+	mAngleToSun += mSpeed / 10 * deltaTime;
+
+	mPosition.x = cos(mAngleToSun) * mDistanceFromSun;
+	mPosition.z = sin(mAngleToSun) * mDistanceFromSun;
+
+	SetPosition(mPosition);
 }
 
 void Neptune::Render(const Camera& camera, ConstantBuffer& constantBuffer, bool useTransform)
@@ -295,14 +392,28 @@ void Neptune::Render(const Camera& camera, ConstantBuffer& constantBuffer, bool 
 	Texture::UnbindPS(0);
 }
 
-void Pluto::Initialize()
+void Neptune::DebugUI()
 {
-	MeshPX sphere = MeshBuilder::CreateSpherePX(30, 30, 1.0f);
+	ImGui::Checkbox("Neptune Orbit Line", &mOrbitLine);
+	if (mOrbitLine)
+	{
+		SimpleDraw::AddCircle(60, 60, mDistanceFromSun, Vector3::Zero, Colors::Red);
+	}
+	ImGui::DragFloat("Neptune Rotating Speed", &mSpeed);
+	ImGui::DragFloat("Neptune Spinning Speed", &mSelfSpinSpeed);
+}
+
+void Pluto::Initialize(const float& size, const float& distance, const float& moveSpeed, const float& spinSpeed)
+{
+	MeshPX sphere = MeshBuilder::CreateSpherePX(30, 30, size);
 	mMeshBuffer.Initialize(sphere);
 
 	mDiffuseTexture.Initialize(L"../../Assets/Textures/planets/pluto.jpg");
 
 	mTransform = Matrix4::Identity;
+	mSpeed = moveSpeed;
+	mDistanceFromSun = distance;
+	mSelfSpinSpeed = spinSpeed;
 }
 
 void Pluto::Terminate()
@@ -313,6 +424,19 @@ void Pluto::Terminate()
 
 void Pluto::Update(float deltaTime)
 {
+	//spining itself
+	mYAngle += mSelfSpinSpeed / 10 * deltaTime;
+	Matrix4 rotMatrix = Matrix4::RotationY(mYAngle);
+	Matrix4 transMatrix = Matrix4::Translation(0.0f, 0.0f, 0.0f);
+	mTransform = rotMatrix * transMatrix;
+
+	//rotate around the sun calculation
+	mAngleToSun += mSpeed / 10 * deltaTime;
+
+	mPosition.x = cos(mAngleToSun) * mDistanceFromSun;
+	mPosition.z = sin(mAngleToSun) * mDistanceFromSun;
+
+	SetPosition(mPosition);
 }
 
 void Pluto::Render(const Camera& camera, ConstantBuffer& constantBuffer, bool useTransform)
@@ -332,14 +456,28 @@ void Pluto::Render(const Camera& camera, ConstantBuffer& constantBuffer, bool us
 	Texture::UnbindPS(0);
 }
 
-void Saturn::Initialize()
+void Pluto::DebugUI()
 {
-	MeshPX sphere = MeshBuilder::CreateSpherePX(30, 30, 1.0f);
+	ImGui::Checkbox("Pluto Orbit Line", &mOrbitLine);
+	if (mOrbitLine)
+	{
+		SimpleDraw::AddCircle(60, 60, mDistanceFromSun, Vector3::Zero, Colors::Red);
+	}
+	ImGui::DragFloat("Pluto Rotating Speed", &mSpeed);
+	ImGui::DragFloat("Pluto Spinning Speed", &mSelfSpinSpeed);
+}
+
+void Saturn::Initialize(const float& size, const float& distance, const float& moveSpeed, const float& spinSpeed)
+{
+	MeshPX sphere = MeshBuilder::CreateSpherePX(30, 30, size);
 	mMeshBuffer.Initialize(sphere);
 
 	mDiffuseTexture.Initialize(L"../../Assets/Textures/planets/saturn.jpg");
 
 	mTransform = Matrix4::Identity;
+	mSpeed = moveSpeed;
+	mDistanceFromSun = distance;
+	mSelfSpinSpeed = spinSpeed;
 }
 
 void Saturn::Terminate()
@@ -350,6 +488,19 @@ void Saturn::Terminate()
 
 void Saturn::Update(float deltaTime)
 {
+	//spining itself
+	mYAngle += mSelfSpinSpeed / 10 * deltaTime;
+	Matrix4 rotMatrix = Matrix4::RotationY(mYAngle);
+	Matrix4 transMatrix = Matrix4::Translation(0.0f, 0.0f, 0.0f);
+	mTransform = rotMatrix * transMatrix;
+
+	//rotate around the sun calculation
+	mAngleToSun += mSpeed / 10 * deltaTime;
+
+	mPosition.x = cos(mAngleToSun) * mDistanceFromSun;
+	mPosition.z = sin(mAngleToSun) * mDistanceFromSun;
+
+	SetPosition(mPosition);
 }
 
 void Saturn::Render(const Camera& camera, ConstantBuffer& constantBuffer, bool useTransform)
@@ -369,14 +520,28 @@ void Saturn::Render(const Camera& camera, ConstantBuffer& constantBuffer, bool u
 	Texture::UnbindPS(0);
 }
 
-void Uranus::Initialize()
+void Saturn::DebugUI()
 {
-	MeshPX sphere = MeshBuilder::CreateSpherePX(30, 30, 1.0f);
+	ImGui::Checkbox("Saturn Orbit Line", &mOrbitLine);
+	if (mOrbitLine)
+	{
+		SimpleDraw::AddCircle(60, 60, mDistanceFromSun, Vector3::Zero, Colors::Red);
+	}
+	ImGui::DragFloat("Saturn Rotating Speed", &mSpeed);
+	ImGui::DragFloat("Saturn Spinning Speed", &mSelfSpinSpeed);
+}
+
+void Uranus::Initialize(const float& size, const float& distance, const float& moveSpeed, const float& spinSpeed)
+{
+	MeshPX sphere = MeshBuilder::CreateSpherePX(30, 30, size);
 	mMeshBuffer.Initialize(sphere);
 
 	mDiffuseTexture.Initialize(L"../../Assets/Textures/planets/uranus.jpg");
 
 	mTransform = Matrix4::Identity;
+	mSpeed = moveSpeed;
+	mDistanceFromSun = distance;
+	mSelfSpinSpeed = spinSpeed;
 }
 
 void Uranus::Terminate()
@@ -387,6 +552,19 @@ void Uranus::Terminate()
 
 void Uranus::Update(float deltaTime)
 {
+	//spining itself
+	mYAngle += mSelfSpinSpeed / 10 * deltaTime;
+	Matrix4 rotMatrix = Matrix4::RotationY(mYAngle);
+	Matrix4 transMatrix = Matrix4::Translation(0.0f, 0.0f, 0.0f);
+	mTransform = rotMatrix * transMatrix;
+
+	//rotate around the sun calculation
+	mAngleToSun += mSpeed / 10 * deltaTime;
+
+	mPosition.x = cos(mAngleToSun) * mDistanceFromSun;
+	mPosition.z = sin(mAngleToSun) * mDistanceFromSun;
+
+	SetPosition(mPosition);
 }
 
 void Uranus::Render(const Camera& camera, ConstantBuffer& constantBuffer, bool useTransform)
@@ -406,17 +584,28 @@ void Uranus::Render(const Camera& camera, ConstantBuffer& constantBuffer, bool u
 	Texture::UnbindPS(0);
 }
 
-void Venus::Initialize()
+void Uranus::DebugUI()
 {
-	MeshPX sphere = MeshBuilder::CreateSpherePX(30, 30, 1.0f);
+	ImGui::Checkbox("Uranus Orbit Line", &mOrbitLine);
+	if (mOrbitLine)
+	{
+		SimpleDraw::AddCircle(60, 60, mDistanceFromSun, Vector3::Zero, Colors::Red);
+	}
+	ImGui::DragFloat("Uranus Rotating Speed", &mSpeed);
+	ImGui::DragFloat("Uranus Spinning Speed", &mSelfSpinSpeed);
+}
+
+void Venus::Initialize(const float& size, const float& distance, const float& moveSpeed, const float& spinSpeed)
+{
+	MeshPX sphere = MeshBuilder::CreateSpherePX(30, 30, size);
 	mMeshBuffer.Initialize(sphere);
 
 	mDiffuseTexture.Initialize(L"../../Assets/Textures/planets/venus.jpg");
 
 	mTransform = Matrix4::Identity;
-
-	mSpeed = 1;
-	mDistanceFromSun = 50;
+	mSpeed = moveSpeed;
+	mDistanceFromSun = distance;
+	mSelfSpinSpeed = spinSpeed;
 }
 
 void Venus::Terminate()
@@ -427,6 +616,13 @@ void Venus::Terminate()
 
 void Venus::Update(float deltaTime)
 {
+	//spining itself
+	mYAngle += mSelfSpinSpeed / 10 * deltaTime;
+	Matrix4 rotMatrix = Matrix4::RotationY(mYAngle);
+	Matrix4 transMatrix = Matrix4::Translation(0.0f, 0.0f, 0.0f);
+	mTransform = rotMatrix * transMatrix;
+
+	//rotate around the sun calculation
 	mAngleToSun += mSpeed / 10 * deltaTime;
 
 	mPosition.x = cos(mAngleToSun) * mDistanceFromSun;
@@ -450,4 +646,15 @@ void Venus::Render(const Camera& camera, ConstantBuffer& constantBuffer, bool us
 
 	mMeshBuffer.Render();
 	Texture::UnbindPS(0);
+}
+
+void Venus::DebugUI()
+{
+	ImGui::Checkbox("Venus Orbit Line", &mOrbitLine);
+	if (mOrbitLine)
+	{
+		SimpleDraw::AddCircle(60, 60, mDistanceFromSun, Vector3::Zero, Colors::Red);
+	}
+	ImGui::DragFloat("Venus Rotating Speed", &mSpeed);
+	ImGui::DragFloat("Venus Spinning Speed", &mSelfSpinSpeed);
 }

@@ -19,11 +19,17 @@ void GameState::Initialize()
 	mSampler.Initialize(Sampler::Filter::Linear, Sampler::AddressMode::Wrap);
 	mWorldTrans = Matrix4::Identity;
 
-	mSkySphere.Initialize();
-	mSun.Initialize();
-	mMercury.Initialize();
-	mVenus.Initialize();
-	mEarth.Initialize();
+	mSkySphere.Initialize(500.f, 0, 0, 0);
+	mSun.Initialize(5.f, 0, 0, 0);
+	mMercury.Initialize(1.f, 30.f, 46.f, 0.02f);
+	mVenus.Initialize(2.f, 60.f, 17.9f, 0.015f);
+	mEarth.Initialize(2.5f, 90.f, 11.f, 1.f);
+	mMars.Initialize(1.5f, 120.f, 5.8f, 0.5f);
+	mJupiter.Initialize(4.5f, 150.f, 1.f, 45.f);
+	mSaturn.Initialize(4.f, 180.f, .4f, 36.f);
+	mUranus.Initialize(3.5f, 210.f, .14f, 14.f);
+	mNeptune.Initialize(3.f, 240.f, 0.06f, 9.f);
+	mPluto.Initialize(.5f, 270.f, 0.04f, 0.04f);
 }
 void GameState::Terminate()
 {
@@ -32,6 +38,12 @@ void GameState::Terminate()
 	mMercury.Terminate();
 	mVenus.Terminate();
 	mEarth.Terminate();
+	mMars.Terminate();
+	mJupiter.Terminate();
+	mSaturn.Terminate();
+	mUranus.Terminate();
+	mNeptune.Terminate();
+	mPluto.Terminate();
 
 	mSampler.Terminate();
 	mPixShader.Terminate();
@@ -42,46 +54,27 @@ void GameState::Terminate()
 void GameState::Update(float deltaTime)
 {
 	auto inputSystem = InputSystem::Get();
-	if (inputSystem->IsKeyDown(KeyCode::S))
-	{
-		mCameraPos.z -= BTMath::Constants::HalfPi * deltaTime * mCameraMoveSpeed;
-		if(mCameraLookAt.y > 0)
-			mCameraPos.y -= BTMath::Constants::HalfPi * deltaTime * mCameraMoveSpeed;
-		else if(mCameraLookAt.y < 0)
-			mCameraPos.y += BTMath::Constants::HalfPi * deltaTime * mCameraMoveSpeed;
-		mCamera.SetPosition(mCameraPos);
-	}
-	if (inputSystem->IsKeyDown(KeyCode::W))
-	{
-		mCameraPos.z += BTMath::Constants::HalfPi * deltaTime * mCameraMoveSpeed;
-		if (mCameraLookAt.y > 0)
-			mCameraPos.y += BTMath::Constants::HalfPi * deltaTime * mCameraMoveSpeed;
-		else if (mCameraLookAt.y < 0)
-			mCameraPos.y -= BTMath::Constants::HalfPi * deltaTime * mCameraMoveSpeed;
-		mCamera.SetPosition(mCameraPos);
-	}
-	if (inputSystem->IsKeyDown(KeyCode::D))
-	{
-		mCameraPos.x += BTMath::Constants::HalfPi * deltaTime * mCameraMoveSpeed;
-		mCamera.SetPosition(mCameraPos);
-	}
-	if (inputSystem->IsKeyDown(KeyCode::A))
-	{
-		mCameraPos.x -= BTMath::Constants::HalfPi * deltaTime * mCameraMoveSpeed;
-		mCamera.SetPosition(mCameraPos);
-	}
 
 	if (inputSystem->IsMouseDown(MouseButton::LBUTTON) || inputSystem->IsMouseDown(MouseButton::RBUTTON))
 	{
-		mCameraLookAt.x += inputSystem->GetMouseMoveX() * deltaTime;
-		mCameraLookAt.y -= inputSystem->GetMouseMoveY() * deltaTime;
+		mCameraLookAt.x += inputSystem->GetMouseMoveX() * deltaTime * 10;
+		mCameraLookAt.y -= inputSystem->GetMouseMoveY() * deltaTime * 10;
 		mCamera.SetLookAt(mCameraLookAt);
 	}
+
+	if (inputSystem->IsKeyDown(KeyCode::MINUS)) mCamera.Zoom(-1 * deltaTime);
+	else if (inputSystem->IsKeyDown(KeyCode::EQUALS)) mCamera.Zoom(deltaTime);
 
 	mSun.Update(deltaTime);
 	mMercury.Update(deltaTime);
 	mVenus.Update(deltaTime);
 	mEarth.Update(deltaTime);
+	mMars.Update(deltaTime);
+	mJupiter.Update(deltaTime);
+	mSaturn.Update(deltaTime);
+	mUranus.Update(deltaTime);
+	mNeptune.Update(deltaTime);
+	mPluto.Update(deltaTime);
 }
 
 void GameState::Render()
@@ -100,13 +93,27 @@ void GameState::RenderMesh(const Camera& camera, bool useTransform)
 	mMercury.Render(camera, mConstantBuffer, useTransform);
 	mVenus.Render(camera, mConstantBuffer, useTransform);
 	mEarth.Render(camera, mConstantBuffer, useTransform);
+	mMars.Render(camera, mConstantBuffer, useTransform);
+	mJupiter.Render(camera, mConstantBuffer, useTransform);
+	mSaturn.Render(camera, mConstantBuffer, useTransform);
+	mUranus.Render(camera, mConstantBuffer, useTransform);
+	mNeptune.Render(camera, mConstantBuffer, useTransform);
+	mPluto.Render(camera, mConstantBuffer, useTransform);
 }
 
 void GameState::DebugUI()
 {
 	ImGui::Begin("Debug Draw", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
 
+	mMercury.DebugUI();
+	mVenus.DebugUI();
 	mEarth.DebugUI();
+	mMars.DebugUI();
+	mJupiter.DebugUI();
+	mSaturn.DebugUI();
+	mUranus.DebugUI();
+	mNeptune.DebugUI();
+	mPluto.DebugUI();
 	
 	SimpleDraw::Render(mCamera);
 	ImGui::End();

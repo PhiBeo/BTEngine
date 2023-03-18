@@ -25,11 +25,18 @@ protected:
 	VertexShader mVertexShader;
 	PixShader mPixShader;
 
+	//render object
 	SkySphere mSkySphere;
 	Sun mSun;
 	Mercury mMercury;
 	Venus mVenus;
 	Earth mEarth;
+	Mars mMars;
+	Jupiter mJupiter;
+	Saturn mSaturn;
+	Uranus mUranus;
+	Neptune mNeptune;
+	Pluto mPluto;
 
 	Sampler mSampler;
 	Matrix4 mWorldTrans;
