@@ -30,7 +30,7 @@ void BTEngine::Graphics::ConstantBuffer::Terminate()
 	SafeRelease(mConstantBuffer);
 }
 
-void BTEngine::Graphics::ConstantBuffer::Update(const void* data)
+void BTEngine::Graphics::ConstantBuffer::Update(const void* data) const
 {
 	auto context = GraphicsSystem::Get()->GetContext();
 	context->UpdateSubresource(mConstantBuffer, 0, nullptr, data, 0, 0);
